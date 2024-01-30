@@ -1,3 +1,16 @@
+package FFmpeg
+
+import (
+	"context"
+	"fmt"
+	"io"
+	"os"
+	"os/exec"
+
+	"github.com/sirupsen/logrus"
+)
+
+
 func FFmpegRead(
 	pipelineConfig util.PipelineInfo,
 	logger *logrus.Logger,
