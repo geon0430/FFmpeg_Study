@@ -1,3 +1,16 @@
+package FFmpeg
+
+import (
+	"context"
+	"fmt"
+	"io"
+	"os"
+	"os/exec"
+
+	"github.com/sirupsen/logrus"
+)
+
+
 func StreamFFmpeg(
 	pipelineConfig util.PipelineInfo,
 	videoWidth, videoHeight int,
