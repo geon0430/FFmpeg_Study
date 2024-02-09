@@ -1,17 +1,5 @@
-package FFmpeg
-
-import (
-	"context"
-	"fmt"
-	"io"
-	"os"
-	"os/exec"
-
-	"github.com/sirupsen/logrus"
-)
-
-
-func StreamFFmpeg(
+func FFmpegStream(
+	gpuDevice int,
 	pipelineConfig util.PipelineInfo,
 	videoWidth, videoHeight int,
 	streamUrl string,
@@ -19,12 +7,15 @@ func StreamFFmpeg(
 	errorChan chan<- error,
 ) (*exec.Cmd, io.WriteCloser, error) {
 
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
 	FPS := pipelineConfig.RtspInfo.FPS
 	encoder := pipelineConfig.RtspInfo.ENCODER
 
 	cmd := exec.Command("ffmpeg",
 		"-re",
 		"-hwaccel", "cuda",
+		"-hwaccel_device", fmt.Sprintf("%d", gpuDevice),
 		"-f", "rawvideo",
 		"-pixel_format", "bgr24",
 		"-video_size", fmt.Sprintf("%dx%d", videoWidth, videoHeight),
@@ -39,7 +30,6 @@ func StreamFFmpeg(
 		"-preset", "fast",
 		"-maxrate", "4000k",
 		"-g", "60",
-		"-loglevel", "quiet",
 		"-f", "rtsp",
 		"-rtsp_transport", "tcp",
 		fmt.Sprintf(streamUrl),
@@ -52,8 +42,8 @@ func StreamFFmpeg(
 		return nil, nil, err
 	}
 
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
 
 	if err := cmd.Start(); err != nil {
 		logger.Errorf("Error starting command: %v", err)
@@ -61,7 +51,7 @@ func StreamFFmpeg(
 		return nil, nil, err
 	}
 
-	logger.Debugf("Streaming command started successfully")
+	logger.Infof("Streaming command started successfully")
 	return cmd, stdin, nil
 }
 
