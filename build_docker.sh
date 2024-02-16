@@ -1,7 +1,7 @@
 #!/bin/bash/
 
-IMAGE_NAME="hub.inbic.duckdns.org/dev-1-team/go_vms"
+IMAGE_NAME="ffmpeg_study"
 
-TAG="goCuda_FFmpeg-0.2"
+TAG="0.1"
 
 docker build --no-cache -t ${IMAGE_NAME}:${TAG} .
