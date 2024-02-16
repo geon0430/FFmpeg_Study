@@ -1,3 +1,15 @@
+package FFmpeg
+
+import (
+	"context"
+	"fmt"
+	"io"
+	"os"
+	"os/exec"
+
+	"github.com/sirupsen/logrus"
+)
+
 func FFmpegStream(
 	gpuDevice int,
 	pipelineConfig util.PipelineInfo,
@@ -26,7 +38,7 @@ func FFmpegStream(
 		"-reconnect_streamed", "1",
 		"-reconnect_delay_max", "300",
 		"-vf", fmt.Sprintf("scale=%d:%d", videoWidth, videoHeight),
-		"-c:v", fmt.Sprint(encoder), //필요함
+		"-c:v", fmt.Sprint(encoder), 
 		"-preset", "fast",
 		"-maxrate", "4000k",
 		"-g", "60",
