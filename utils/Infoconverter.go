@@ -12,29 +12,28 @@ import (
 )
 
 func InfoConverter(
-	apiConfig apipkg.RTSPstruct,
-	globalConfig PipelineConfig) PipelineInfo {
+	RtspInfo  PipelineConfig) PipelineInfo {
 
 	var pipelineInfo PipelineInfo
-	pipelineInfo.RtspInfo.ID = apiConfig.ID
-	pipelineInfo.RtspInfo.NAME = apiConfig.NAME
-	pipelineInfo.RtspInfo.RTSP = apiConfig.RTSP
-	pipelineInfo.RtspInfo.CODEC = apiConfig.CODEC
-	pipelineInfo.RtspInfo.MODEL = apiConfig.MODEL
-	pipelineInfo.RtspInfo.FPS = apiConfig.FPS
-	pipelineInfo.RtspInfo.IN_WIDTH = apiConfig.IN_WIDTH
-	pipelineInfo.RtspInfo.IN_HEIGHT = apiConfig.IN_HEIGHT
-	pipelineInfo.RtspInfo.GPU = apiConfig.GPU
+	pipelineInfo.RtspInfo.ID = RtspInfo.ID
+	pipelineInfo.RtspInfo.NAME = RtspInfo.NAME
+	pipelineInfo.RtspInfo.RTSP = RtspInfo.RTSP
+	pipelineInfo.RtspInfo.CODEC = RtspInfo.CODEC
+	pipelineInfo.RtspInfo.MODEL = RtspInfo.MODEL
+	pipelineInfo.RtspInfo.FPS = RtspInfo.FPS
+	pipelineInfo.RtspInfo.IN_WIDTH = RtspInfo.IN_WIDTH
+	pipelineInfo.RtspInfo.IN_HEIGHT = RtspInfo.IN_HEIGHT
+	pipelineInfo.RtspInfo.GPU = RtspInfo.GPU
 
-	pipelineInfo.RtspInfo.ENCODER = returnEncoder(apiConfig.CODEC, globalConfig)
-	pipelineInfo.RtspInfo.DECODER = returnDecoder(apiConfig.CODEC, globalConfig)
+	pipelineInfo.RtspInfo.ENCODER = returnEncoder(RtspInfo.CODEC, globalConfig)
+	pipelineInfo.RtspInfo.DECODER = returnDecoder(RtspInfo.CODEC, globalConfig)
 
-	_orgRtspAddr, _resizeRtspAddr := returnStreamAddr(apiConfig, globalConfig)
+	_orgRtspAddr, _resizeRtspAddr := returnStreamAddr(RtspInfo, globalConfig)
 	pipelineInfo.RtspInfo.OrgRtspAddr = _orgRtspAddr
 	pipelineInfo.RtspInfo.ResizeRtspAddr = _resizeRtspAddr
-	pipelineInfo.RtspInfo.BufferSize = globalConfig.General.BufferSize
-	pipelineInfo.RtspInfo.Channels = globalConfig.General.Channels
-	pipelineInfo.RtspInfo.LogPath = globalConfig.General.LogPath
+	pipelineInfo.RtspInfo.BufferSize = RtspInfo.General.BufferSize
+	pipelineInfo.RtspInfo.Channels = RtspInfo.General.Channels
+	pipelineInfo.RtspInfo.LogPath = RtspInfo.General.LogPath
 
 	return pipelineInfo
 }
@@ -56,12 +55,11 @@ func returnDecoder(CODEC string, globalConfig PipelineConfig) string {
 }
 
 func returnStreamAddr(
-	apiconfig apipkg.RTSPstruct,
-	globalConfig PipelineConfig) (string, string) {
-	name := apiconfig.NAME
+	RtspInfo PipelineConfig) (string, string) {
+	name := RtspInfo.NAME
 	rtspServer := globalConfig.General.RtspServer
-	out_height := apiconfig.OUT_HEIGHT
-	in_height := apiconfig.IN_HEIGHT
+	out_height := RtspInfo.OUT_HEIGHT
+	in_height := RtspInfo.IN_HEIGHT
 
 	OrgRtspAddr := fmt.Sprintf("rtsp://%s/%s_%dp", rtspServer, name, in_height)
 	ResizeRtspAddr := fmt.Sprintf("rtsp://%s/%s_%dp", rtspServer, name, out_height)
