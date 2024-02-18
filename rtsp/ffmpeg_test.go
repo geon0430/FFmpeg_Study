@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func TestRtspHookServer(t *testing.T) {
+func TestFFmpegstream(t *testing.T) {
 
 	TestRtspInfo := util.RtspInfo{
 		ID:             int(12345),
@@ -42,13 +42,6 @@ func TestRtspHookServer(t *testing.T) {
 	EndTicker := util.CreateTicker(duration)
 
 	////////////////////////////////////////////////////////////////////////
-	var Logpath = TestPipelineInfo.RtspInfo.LogPath
-	var model = TestPipelineInfo.RtspInfo.MODEL
-	var name = TestPipelineInfo.RtspInfo.NAME
-	var idStr = TestPipelineInfo.RtspInfo.ID
-	var id = strconv.Itoa(idStr)
-	var logLevel = "debug"
-	logger := util.SetupLogging(Logpath, model, name, logLevel, id)
 	Context, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	bufferSize := TestPipelineInfo.RtspInfo.BufferSize
@@ -59,8 +52,6 @@ func TestRtspHookServer(t *testing.T) {
 		Context,
 		TestPipelineInfo,
 		rtspReadBuf,
-		errorChan,
-		logger,
 	)
 	go StreamRtsp(
 		Context,
@@ -68,8 +59,6 @@ func TestRtspHookServer(t *testing.T) {
 		TestPipelineInfo.RtspInfo.IN_WIDTH, TestPipelineInfo.RtspInfo.IN_HEIGHT,
 		TestPipelineInfo.RtspInfo.OrgRtspAddr,
 		rtspReadBuf,
-		errorChan,
-		logger,
 	)
 
 	////////////////////////////////////////////////////////////////////////
