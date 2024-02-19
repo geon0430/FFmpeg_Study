@@ -3,6 +3,7 @@ package util
 import (
 	"testing"
 	"reflect"
+	"fmt"
 )
 
 func TestInfoConverter(t *testing.T) {
@@ -16,22 +17,22 @@ func TestInfoConverter(t *testing.T) {
 			FPS:       10,
 			IN_WIDTH:  1999,
 			IN_HEIGHT: 1888,
-			GPU:       1,
-		},
-		General: GeneralConfig{
 			BufferSize: 99,
 			Channels:   5,
 			LogPath:    "/tmp/log",
 			RtspServer: "rtsp://localtest:8554",
+			// ENCODER:    "h264_encoder_test",
+			// DECODER:    "h264_decoder_test",
+
 		},
-		Encoder: Encoder{
-			H264: "h264_encoder_test",
-			H265: "h265_encoder_test",
-		},
-		Decoder: Decoder{
-			H264: "h264_decoder_test",
-			H265: "h265_decoder_test",
-		},
+		// Encoder: Encoder{
+		// 	H264: "h264_encoder_test",
+		// 	H265: "h265_encoder_test",
+		// },
+		// Decoder: Decoder{
+		// 	H264: "h264_decoder_test",
+		// 	H265: "h265_decoder_test",
+		// },
 	}
 
 	expectedRtspInfo := RtspInfo{
@@ -43,18 +44,27 @@ func TestInfoConverter(t *testing.T) {
 		FPS:         10,
 		IN_WIDTH:    1999,
 		IN_HEIGHT:   1888,
-		GPU:         1,
-		ENCODER:     "h264_encoder_test",
-		DECODER:     "h264_decoder_test",
+		RtspServer: "rtsp://localtest:8554",
+		// ENCODER:     "h264_encoder_test",
+		// DECODER:     "h264_decoder_test",
 		OrgRtspAddr: "rtsp://localtest:8554/NAME_test_1888p",
 		BufferSize: 99,
 		Channels:   5,
 		LogPath:    "/tmp/log",
 	}
+	resultRtspInfo := InfoConverter(TestConfig.RtspInfo)
 
-	resultPipelineInfo := InfoConverter(TestConfig)
-
-	if !reflect.DeepEqual(resultPipelineInfo.RtspInfo, expectedRtspInfo) {
-		t.Errorf("InfoConverter result does not match expected result")
-	}
+    if !reflect.DeepEqual(resultRtspInfo, expectedRtspInfo) {
+        t.Errorf("InfoConverter result does not match expected result")
+        vResult := reflect.ValueOf(resultRtspInfo)
+        vExpected := reflect.ValueOf(expectedRtspInfo)
+        for i := 0; i < vResult.NumField(); i++ {
+            if !reflect.DeepEqual(vResult.Field(i).Interface(), vExpected.Field(i).Interface()) {
+                fmt.Printf("Field mismatch: %s\nExpected: %+v\nGot: %+v\n", 
+                    vResult.Type().Field(i).Name, 
+                    vExpected.Field(i).Interface(), 
+                    vResult.Field(i).Interface())
+            }
+        }
+    }
 }

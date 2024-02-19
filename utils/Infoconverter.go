@@ -1,65 +1,60 @@
 package util
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
-	apipkg "go_vms/src/api/util"
-	"math/rand"
-	"reflect"
-	"strings"
-	"time"
+	// "reflect"
+	// "strings"
+
 )
 
-func InfoConverter(
-	RtspInfo  PipelineConfig) PipelineInfo {
+func InfoConverter(rtspInfo RtspInfo) RtspInfo {
+	var pipelineInfo RtspInfo
+	pipelineInfo.ID = rtspInfo.ID
+	pipelineInfo.NAME = rtspInfo.NAME
+	pipelineInfo.RTSP = rtspInfo.RTSP
+	pipelineInfo.CODEC = rtspInfo.CODEC
+	pipelineInfo.MODEL = rtspInfo.MODEL
+	pipelineInfo.FPS = rtspInfo.FPS
+	pipelineInfo.IN_WIDTH = rtspInfo.IN_WIDTH
+	pipelineInfo.IN_HEIGHT = rtspInfo.IN_HEIGHT
+	pipelineInfo.RtspServer = rtspInfo.RtspServer
 
-	var pipelineInfo PipelineInfo
-	pipelineInfo.RtspInfo.ID = RtspInfo.ID
-	pipelineInfo.RtspInfo.NAME = RtspInfo.NAME
-	pipelineInfo.RtspInfo.RTSP = RtspInfo.RTSP
-	pipelineInfo.RtspInfo.CODEC = RtspInfo.CODEC
-	pipelineInfo.RtspInfo.MODEL = RtspInfo.MODEL
-	pipelineInfo.RtspInfo.FPS = RtspInfo.FPS
-	pipelineInfo.RtspInfo.IN_WIDTH = RtspInfo.IN_WIDTH
-	pipelineInfo.RtspInfo.IN_HEIGHT = RtspInfo.IN_HEIGHT
-	pipelineInfo.RtspInfo.GPU = RtspInfo.GPU
-
-	pipelineInfo.RtspInfo.ENCODER = returnEncoder(RtspInfo.CODEC, globalConfig)
-	pipelineInfo.RtspInfo.DECODER = returnDecoder(RtspInfo.CODEC, globalConfig)
-
-	_orgRtspAddr := returnStreamAddr(RtspInfo, globalConfig)
-	pipelineInfo.RtspInfo.OrgRtspAddr = _orgRtspAddr
-	pipelineInfo.RtspInfo.BufferSize = RtspInfo.General.BufferSize
-	pipelineInfo.RtspInfo.Channels = RtspInfo.General.Channels
-	pipelineInfo.RtspInfo.LogPath = RtspInfo.General.LogPath
+	// pipelineInfo.ENCODER = returnEncoder(rtspInfo.CODEC, rtspInfo)
+	// pipelineInfo.DECODER = returnDecoder(rtspInfo.CODEC, rtspInfo)
+	_orgRtspAddr := returnStreamAddr(rtspInfo) 
+	pipelineInfo.OrgRtspAddr = _orgRtspAddr
+	pipelineInfo.BufferSize = rtspInfo.BufferSize
+	pipelineInfo.Channels = rtspInfo.Channels
+	pipelineInfo.LogPath = rtspInfo.LogPath
 
 	return pipelineInfo
 }
 
-func returnEncoder(CODEC string, globalConfig PipelineConfig) string {
-	codec := strings.ToUpper(CODEC) // codec = H264
 
-	r := reflect.ValueOf(globalConfig.Encoder)
-	encoder := reflect.Indirect(r).FieldByName(codec)
-	return encoder.String()
-}
+// func returnEncoder(CODEC string, rtspInfo RtspInfo) string {
+//     codec := strings.ToUpper(CODEC) // codec = H264
 
-func returnDecoder(CODEC string, globalConfig PipelineConfig) string {
-	codec := strings.ToUpper(CODEC) // codec = H264
+//     r := reflect.ValueOf(rtspInfo.Encoder)
+//     encoder := reflect.Indirect(r).FieldByName(codec)
+//     return encoder.String()
+// }
 
-	r := reflect.ValueOf(globalConfig.Decoder)
-	decoder := reflect.Indirect(r).FieldByName(codec)
-	return decoder.String()
-}
+// func returnDecoder(CODEC string, rtspInfo RtspInfo) string {
+//     codec := strings.ToUpper(CODEC) // codec = H264
+
+//     r := reflect.ValueOf(rtspInfo.Decoder)
+//     decoder := reflect.Indirect(r).FieldByName(codec)
+//     return decoder.String()
+// }
+
 
 func returnStreamAddr(
-	RtspInfo PipelineConfig) (string, string) {
-	name := RtspInfo.NAME
-	rtspServer := globalConfig.General.RtspServer
-	in_height := RtspInfo.IN_HEIGHT
+	rtspInfo RtspInfo) (string) {
+	name := rtspInfo.NAME
+	rtspServer := rtspInfo.RtspServer
+	in_height := rtspInfo.IN_HEIGHT
 
-	OrgRtspAddr := fmt.Sprintf("rtsp://%s/%s_%dp", rtspServer, name, in_height)
+	OrgRtspAddr := fmt.Sprintf("%s/%s_%dp", rtspServer, name, in_height)
 
 	return OrgRtspAddr
 }

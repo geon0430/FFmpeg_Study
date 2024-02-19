@@ -1,14 +1,11 @@
 package util
 
 import (
-	"encoding/binary"
-	"fmt"
-	"math"
-	"time"
+
 )
 
 type PipelineConfig struct {
-	General    RtspInfo
+	RtspInfo    RtspInfo
 	Encoder    Encoder
 	Decoder    Decoder
 }
@@ -27,6 +24,7 @@ type RtspInfo struct {
 	ID              int
 	NAME            string
 	RTSP            string
+	RtspServer 		string
 	CODEC           string
 	MODEL           string
 	FPS             float64
@@ -36,8 +34,9 @@ type RtspInfo struct {
 	DECODER         string
 	OrgRtspAddr     string
 	ResizeRtspAddr  string
-	BufferSize int
-	Channels   int
-	LogPath    string
+	BufferSize		int
+	Channels  		int
+	LogPath   		string
+
 }
 
