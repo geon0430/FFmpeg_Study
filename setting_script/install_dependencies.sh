@@ -50,4 +50,3 @@ apt-get install -y \
 			libxrender1 \
 			libxvidcore-dev 
 
-pip install icecream pycuda
