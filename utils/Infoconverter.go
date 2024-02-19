@@ -28,9 +28,8 @@ func InfoConverter(
 	pipelineInfo.RtspInfo.ENCODER = returnEncoder(RtspInfo.CODEC, globalConfig)
 	pipelineInfo.RtspInfo.DECODER = returnDecoder(RtspInfo.CODEC, globalConfig)
 
-	_orgRtspAddr, _resizeRtspAddr := returnStreamAddr(RtspInfo, globalConfig)
+	_orgRtspAddr := returnStreamAddr(RtspInfo, globalConfig)
 	pipelineInfo.RtspInfo.OrgRtspAddr = _orgRtspAddr
-	pipelineInfo.RtspInfo.ResizeRtspAddr = _resizeRtspAddr
 	pipelineInfo.RtspInfo.BufferSize = RtspInfo.General.BufferSize
 	pipelineInfo.RtspInfo.Channels = RtspInfo.General.Channels
 	pipelineInfo.RtspInfo.LogPath = RtspInfo.General.LogPath
@@ -58,11 +57,9 @@ func returnStreamAddr(
 	RtspInfo PipelineConfig) (string, string) {
 	name := RtspInfo.NAME
 	rtspServer := globalConfig.General.RtspServer
-	out_height := RtspInfo.OUT_HEIGHT
 	in_height := RtspInfo.IN_HEIGHT
 
 	OrgRtspAddr := fmt.Sprintf("rtsp://%s/%s_%dp", rtspServer, name, in_height)
-	ResizeRtspAddr := fmt.Sprintf("rtsp://%s/%s_%dp", rtspServer, name, out_height)
 
-	return OrgRtspAddr, ResizeRtspAddr
+	return OrgRtspAddr
 }
