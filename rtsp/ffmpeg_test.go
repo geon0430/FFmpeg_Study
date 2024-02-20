@@ -49,7 +49,6 @@ func TestFFmpegstream(t *testing.T) {
 	}
 	defer readCmd.Wait() 
 	
-	// Initialize the RTSP stream process.
 	streamCmd, streamStdin, err := GPUFFmpegStream(gpuDevice, streamConfig, readConfig.RtspInfo.IN_WIDTH, readConfig.RtspInfo.IN_HEIGHT, streamUrl, logger, errorChan)
 	if err != nil {
 		return err
@@ -68,7 +67,7 @@ func TestFFmpegstream(t *testing.T) {
 		logger.Errorf("Failed to pipe data: %v", err)
 		errorChan <- err
 		}
-		streamStdin.Close() // Ensure the stream's stdin is closed to signal EOF.
+		streamStdin.Close() 
 		}()
 
 		// Wait for the read command to finish.
