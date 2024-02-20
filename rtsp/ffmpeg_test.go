@@ -42,24 +42,51 @@ func TestFFmpegstream(t *testing.T) {
 	EndTicker := util.CreateTicker(duration)
 
 	////////////////////////////////////////////////////////////////////////
+
+	readCmd, readStdout, err := GPUFFmpegRead(readConfig, logger, errorChan, ctx)
+	if err != nil {
+		return err
+	}
+	defer readCmd.Wait() 
+	
+	// Initialize the RTSP stream process.
+	streamCmd, streamStdin, err := GPUFFmpegStream(gpuDevice, streamConfig, readConfig.RtspInfo.IN_WIDTH, readConfig.RtspInfo.IN_HEIGHT, streamUrl, logger, errorChan)
+	if err != nil {
+		return err
+	}
+	defer streamCmd.Wait() 
+	////////////////////////////////////////////////////////////////////////	
 	Context, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	bufferSize := TestPipelineInfo.RtspInfo.BufferSize
 	rtspReadBuf := make(chan *[]byte, bufferSize)
 	errorChan := make(chan error, bufferSize)
 
-	go ReadRtsp(
-		Context,
-		TestPipelineInfo,
-		rtspReadBuf,
-	)
-	go StreamRtsp(
-		Context,
-		TestPipelineInfo,
-		TestPipelineInfo.RtspInfo.IN_WIDTH, TestPipelineInfo.RtspInfo.IN_HEIGHT,
-		TestPipelineInfo.RtspInfo.OrgRtspAddr,
-		rtspReadBuf,
-	)
+	go func() {
+		_, err := io.Copy(streamStdin, readStdout)
+		if err != nil {
+		logger.Errorf("Failed to pipe data: %v", err)
+		errorChan <- err
+		}
+		streamStdin.Close() // Ensure the stream's stdin is closed to signal EOF.
+		}()
+
+		// Wait for the read command to finish.
+		if err := readCmd.Wait(); err != nil {
+			logger.Errorf("Read command failed: %v", err)
+			errorChan <- err
+			return err
+		}
+		
+		// Wait for the stream command to finish.
+		if err := streamCmd.Wait(); err != nil {
+			logger.Errorf("Stream command failed: %v", err)
+			errorChan <- err
+			return err
+		}
+		
+		return nil
+		}
 
 	////////////////////////////////////////////////////////////////////////
 	counter := int(1)
