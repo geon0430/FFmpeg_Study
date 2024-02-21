@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"testing"
 	"time"
+	util "ffmpeg/util"
 )
 
 func TestFFmpegstream(t *testing.T) {
@@ -62,30 +63,13 @@ func TestFFmpegstream(t *testing.T) {
 	errorChan := make(chan error, bufferSize)
 
 	go func() {
-		_, err := io.Copy(streamStdin, readStdout)
-		if err != nil {
-		logger.Errorf("Failed to pipe data: %v", err)
-		errorChan <- err
-		}
-		streamStdin.Close() 
-		}()
+        _, err := io.Copy(streamStdin, readStdout)
+        if err != nil {
+            t.Errorf("Failed to pipe data: %v", err) // 테스트 오류 로깅
+        }
+        streamStdin.Close() 
+    }()
 
-		// Wait for the read command to finish.
-		if err := readCmd.Wait(); err != nil {
-			logger.Errorf("Read command failed: %v", err)
-			errorChan <- err
-			return err
-		}
-		
-		// Wait for the stream command to finish.
-		if err := streamCmd.Wait(); err != nil {
-			logger.Errorf("Stream command failed: %v", err)
-			errorChan <- err
-			return err
-		}
-		
-		return nil
-		}
 
 	////////////////////////////////////////////////////////////////////////
 	counter := int(1)

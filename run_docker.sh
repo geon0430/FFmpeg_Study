@@ -25,11 +25,11 @@ docker run \
     --name ${CONTAINER_NAME} \
     --privileged \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
-    -v /home/inbic/ffmpeg:/ffmpeg \
-    -v ${go_vms_path}//ffpeg/ \
+    -v /home/inbic/FFmpeg_study:/FFmpeg_study \
+    -v ${go_vms_path}//FFmpeg_study/ \
     -e DISPLAY=$DISPLAY \
     --shm-size 20g \
     --restart=always \
-    -w /go_vms \
+    -w /FFmpeg_study \
     ${IMAGE_NAME}:${TAG}
 

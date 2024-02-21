@@ -1,4 +1,4 @@
-package FFmpeg
+package rtsp
 
 import (
 	"context"
