@@ -1,4 +1,4 @@
-package rtsp
+package imshow
 
 import (
 	"context"
