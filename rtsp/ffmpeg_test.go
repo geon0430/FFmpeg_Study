@@ -28,10 +28,7 @@ func TestFFmpegstream(t *testing.T) {
 		WaitCnt:    int(1.0 / 10.0 * 5.0 / 0.01),
 		ChunkSize:  int(1000),
 		Channels:   int(5),
-		LogPath:    string("/tmp/log"),
 	}
-	TestRtspInfo.ON_TIME, _ = time.Parse("15:04", "19:00")
-	TestRtspInfo.OFF_TIME, _ = time.Parse("15:04", "7:00")
 
 	TestPipelineInfo := util.PipelineInfo{
 		RtspInfo:     TestRtspInfo,
@@ -65,7 +62,7 @@ func TestFFmpegstream(t *testing.T) {
 	go func() {
         _, err := io.Copy(streamStdin, readStdout)
         if err != nil {
-            t.Errorf("Failed to pipe data: %v", err) // 테스트 오류 로깅
+            t.Errorf("Failed to pipe data: %v", err)
         }
         streamStdin.Close() 
     }()
